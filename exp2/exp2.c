@@ -3,7 +3,7 @@
 sbit cl = P2^0;
 sbit ch = P2^1;
 
-int first_state = 0, second_state = 0, old_ch, old_cl;
+int first_state = 0, second_state = 0, old_ch, old_cl, first_counter = 0, second_counter = 0;
 
 int chDown();
 int clDown();
@@ -53,10 +53,20 @@ int clUp() {
 }
 
 int firstTimeout() {
+	if (first_counter == 25000) {
+		first_counter = 0;
+		return 1;
+	}
+	first_counter++;
 	return 0;
 }
 
 int secondTimeout() {
+	if (second_counter == 25000) {
+		second_counter = 0;
+		return 1;
+	}
+	second_counter++;
 	return 0;
 }
 

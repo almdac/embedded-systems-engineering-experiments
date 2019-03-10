@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   EXP2                                                              03/10/2019 15:21:19 PAGE 1   
+C51 COMPILER V9.59.0.0   EXP2                                                              03/10/2019 18:03:36 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE EXP2
@@ -13,7 +13,7 @@ line level    source
    3          sbit cl = P2^0;
    4          sbit ch = P2^1;
    5          
-   6          int first_state = 0, second_state = 0, old_ch, old_cl;
+   6          int first_state = 2, second_state = 2, old_ch, old_cl, first_counter = 0, second_counter = 0;
    7          
    8          int chDown();
    9          int clDown();
@@ -28,112 +28,119 @@ line level    source
   18          void main() {
   19   1        old_ch = ch;
   20   1        old_cl = cl;
-  21   1        
-  22   1        while(1) {
-  23   2          firstMachine();
-  24   2          secondMachine();
-  25   2        }
-  26   1      }
-  27          
-  28          int chDown() {
-  29   1        if (old_ch && !ch) {
-  30   2          old_ch = ch;
-  31   2          return 1;
-  32   2        } else return 0;
-  33   1      }
-  34          
-  35          int clDown() {
-  36   1        if (old_cl && !cl) {
-  37   2          old_cl = cl;
-  38   2          return 1;
-  39   2        } else return 0;
-  40   1      }
-  41          
-  42          int chUp() {
-  43   1        if (!old_ch && ch) {
-  44   2          old_ch = ch;
-  45   2          return 1;
-  46   2        } else return 0;
-  47   1      }
-  48          
-  49          int clUp() {
-  50   1        if (!old_cl && cl) {
-  51   2          old_cl = cl;
-  52   2          return 1;
-  53   2        } else return 0;
-  54   1      }
-C51 COMPILER V9.59.0.0   EXP2                                                              03/10/2019 15:21:19 PAGE 2   
+  21   1        while(1) {
+  22   2          firstMachine();
+  23   2          secondMachine();
+  24   2        }
+  25   1      }
+  26          
+  27          int chDown() {
+  28   1        if (old_ch && !ch) {
+  29   2          old_ch = ch;
+  30   2          return 1;
+  31   2        } else return 0;
+  32   1      }
+  33          
+  34          int clDown() {
+  35   1        if (old_cl && !cl) {
+  36   2          old_cl = cl;
+  37   2          return 1;
+  38   2        } else return 0;
+  39   1      }
+  40          
+  41          int chUp() {
+  42   1        if (!old_ch && ch) {
+  43   2          old_ch = ch;
+  44   2          return 1;
+  45   2        } else return 0;
+  46   1      }
+  47          
+  48          int clUp() {
+  49   1        if (!old_cl && cl) {
+  50   2          old_cl = cl;
+  51   2          return 1;
+  52   2        } else return 0;
+  53   1      }
+  54          
+C51 COMPILER V9.59.0.0   EXP2                                                              03/10/2019 18:03:36 PAGE 2   
 
-  55          
-  56          int firstTimeout() {
-  57   1        return 0;
-  58   1      }
-  59          
-  60          int secondTimeout() {
+  55          int firstTimeout() {
+  56   1        if (first_counter == 25000) {
+  57   2          first_counter = 0;
+  58   2          return 1;
+  59   2        }
+  60   1        first_counter++;
   61   1        return 0;
   62   1      }
   63          
-  64          void firstMachine(){
-  65   1        switch (first_state) {
-  66   2          case 0:
-  67   2            if (chUp()) {
-  68   3              P1 = (P1 & 0x0F) | (P0 & 0xF0);
-  69   3              first_state = 2;
-  70   3            } else if (chDown()) {
-  71   3              first_state = 1;
-  72   3            }
-  73   2            break;
-  74   2            
-  75   2          case 1:
+  64          int secondTimeout() {
+  65   1        if (second_counter == 25000) {
+  66   2          second_counter = 0;
+  67   2          return 1;
+  68   2        }
+  69   1        second_counter++;
+  70   1        return 0;
+  71   1      }
+  72          
+  73          void firstMachine(){
+  74   1        switch (first_state) {
+  75   2          case 0:
   76   2            if (chUp()) {
   77   3              P1 = (P1 & 0x0F) | (P0 & 0xF0);
   78   3              first_state = 2;
-  79   3            }
-  80   2            break;
-  81   2          
-  82   2          case 2:
-  83   2            if (firstTimeout()) {
-  84   3              P1 = P1 & 0x0F;
-  85   3            }
-  86   2            break;
-  87   2        }
-  88   1      }
-  89          
-  90          void secondMachine() {
-  91   1          switch (second_state) {
-  92   2          case 0:
-  93   2            if (clUp()) {
-  94   3              P1 = (P1 & 0xF0) | (P0 & 0x0F);
-  95   3              second_state = 2;
-  96   3            } else if (clDown()) {
-  97   3              second_state = 1;
-  98   3            }
-  99   2            break;
- 100   2            
- 101   2          case 1:
- 102   2            if (clUp()) {
- 103   3              P1 = (P1 & 0xF0) | (P0 & 0x0F);
- 104   3              second_state = 2;
- 105   3            }
- 106   2            break;
- 107   2          
- 108   2          case 2:
- 109   2            if (secondTimeout()) {
- 110   3              P1 = P1 & 0xF0;
- 111   3            }
- 112   2            break;
- 113   2        }
- 114   1      }
+  79   3            } else if (chDown()) {
+  80   3              first_state = 1;
+  81   3            }
+  82   2            break;
+  83   2          case 1:
+  84   2            if (chUp()) {
+  85   3              P1 = (P1 & 0x0F) | (P0 & 0xF0);
+  86   3              first_state = 2;
+  87   3            }
+  88   2            break;  
+  89   2          case 2:
+  90   2            if (firstTimeout()) {
+  91   3              P1 = P1 & 0x0F;
+  92   3              first_state = 0;
+  93   3            }
+  94   2            break;
+  95   2        }
+  96   1      }
+  97          
+  98          void secondMachine() {
+  99   1          switch (second_state) {
+ 100   2          case 0:
+ 101   2            if (clUp()) {
+ 102   3              P1 = (P1 & 0xF0) | (P0 & 0x0F);
+ 103   3              second_state = 2;
+ 104   3            } else if (clDown()) {
+ 105   3              second_state = 1;
+ 106   3            }
+ 107   2            break;
+ 108   2          case 1:
+ 109   2            if (clUp()) {
+ 110   3              P1 = (P1 & 0xF0) | (P0 & 0x0F);
+ 111   3              second_state = 2;
+ 112   3            }
+ 113   2            break;
+ 114   2          case 2:
+ 115   2            if (secondTimeout()) {
+ 116   3              P1 = P1 & 0xF0;
+C51 COMPILER V9.59.0.0   EXP2                                                              03/10/2019 18:03:36 PAGE 3   
 
+ 117   3              first_state = 0;
+ 118   3            }
+ 119   2            break;
+ 120   2        }
+ 121   1      }
 
-C51 COMPILER V9.59.0.0   EXP2                                                              03/10/2019 15:21:19 PAGE 3   
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    292    ----
+   CODE SIZE        =    356    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      8    ----
+   DATA SIZE        =     12    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
