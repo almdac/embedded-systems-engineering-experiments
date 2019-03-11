@@ -3,118 +3,62 @@
 sbit cl = P2^0;
 sbit ch = P2^1;
 
-int first_state = 0, second_state = 0, old_ch, old_cl, first_counter = 0, second_counter = 0;
-
-int chDown();
-int clDown();
-int chUp();
-int clUp();
-int firstTimeout();
-int secondTimeout();
-
 void firstMachine();
 void secondMachine();
 
 void main() {
-	old_ch = ch;
-	old_cl = cl;
 	while(1) {
 		firstMachine();
 		secondMachine();
 	}
 }
 
-int chDown() {
-	if (old_ch && !ch) {
-		old_ch = ch;
-		return 1;
-	} else return 0;
-}
-
-int clDown() {
-	if (old_cl && !cl) {
-		old_cl = cl;
-		return 1;
-	} else return 0;
-}
-
-int chUp() {
-	if (!old_ch && ch) {
-		old_ch = ch;
-		return 1;
-	} else return 0;
-}
-
-int clUp() {
-	if (!old_cl && cl) {
-		old_cl = cl;
-		return 1;
-	} else return 0;
-}
-
-int firstTimeout() {
-	if (first_counter == 25000) {
-		first_counter = 0;
-		return 1;
-	}
-	first_counter++;
-	return 0;
-}
-
-int secondTimeout() {
-	if (second_counter == 25000) {
-		second_counter = 0;
-		return 1;
-	}
-	second_counter++;
-	return 0;
-}
 
 void firstMachine(){
-	switch (first_state) {
+	static unsigned char state = 0;
+  static unsigned int counter;
+	switch (state) {
 		case 0:
-			if (chUp()) {
-				P1 = (P1 & 0x0F) | (P0 & 0xF0);
-				first_state = 2;
-			} else if (chDown()) {
-				first_state = 1;
+			if (ch == 0) {
+				state = 1;
 			}
 			break;
 		case 1:
-			if (chUp()) {
+			if (ch == 1) {
 				P1 = (P1 & 0x0F) | (P0 & 0xF0);
-				first_state = 2;
+				counter = 0;
+				state = 2;
 			}
 			break;	
 		case 2:
-			if (firstTimeout()) {
+			if (counter++ == 25000) {
 				P1 = P1 & 0x0F;
-				first_state = 0;
+				state = 0;
 			}
 			break;
 	}
 }
 
 void secondMachine() {
-		switch (second_state) {
+		static unsigned char state = 0;
+    static unsigned int counter;
+		switch (state) {
 		case 0:
-			if (clUp()) {
-				P1 = (P1 & 0xF0) | (P0 & 0x0F);
-				second_state = 2;
-			} else if (clDown()) {
-				second_state = 1;
+			if (cl == 0) {
+				state = 1;
 			}
 			break;
 		case 1:
-			if (clUp()) {
+			if (cl == 1) {
 				P1 = (P1 & 0xF0) | (P0 & 0x0F);
-				second_state = 2;
+				counter = 0;
+				state = 2;
 			}
 			break;
 		case 2:
-			if (secondTimeout()) {
+			if (counter++ == 25000) {
 				P1 = P1 & 0xF0;
-				first_state = 0;
+				state = 0;
 			}
 			break;
 	}
