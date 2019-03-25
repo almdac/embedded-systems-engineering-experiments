@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    03/25/2019  14:26:14  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    03/25/2019  16:04:40  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -31,12 +31,12 @@ LINK MAP OF MODULE:  .\Objects\exp3 (EXP3)
             CODE    000BH     0003H     ABSOLUTE     
                     000EH     07F2H                  *** GAP ***
             CODE    0800H     008CH     UNIT         ?C_C51STARTUP
-            CODE    088CH     003EH     UNIT         ?PR?FIRSTMACHINE?EXP3
-            CODE    08CAH     003EH     UNIT         ?PR?SECONDMACHINE?EXP3
-            CODE    0908H     0033H     UNIT         ?PR?TIMER_INTERRUPT?EXP3
-            CODE    093BH     0015H     UNIT         ?PR?START_TIMER?EXP3
-            CODE    0950H     0015H     UNIT         ?C_INITSEG
-            CODE    0965H     000DH     UNIT         ?PR?MAIN?EXP3
+            CODE    088CH     003CH     UNIT         ?PR?FIRSTMACHINE?EXP3
+            CODE    08C8H     003CH     UNIT         ?PR?SECONDMACHINE?EXP3
+            CODE    0904H     0033H     UNIT         ?PR?TIMER_INTERRUPT?EXP3
+            CODE    0937H     0015H     UNIT         ?PR?START_TIMER?EXP3
+            CODE    094CH     0015H     UNIT         ?C_INITSEG
+            CODE    0961H     000DH     UNIT         ?PR?MAIN?EXP3
 
 
 
@@ -59,7 +59,7 @@ SEGMENT
 
 SYMBOL TABLE OF MODULE:  .\Objects\exp3 (EXP3)
 
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/25/2019  14:26:14  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/25/2019  16:04:40  PAGE 2
 
 
   VALUE           TYPE          NAME
@@ -74,10 +74,10 @@ SYMBOL TABLE OF MODULE:  .\Objects\exp3 (EXP3)
   D:000AH         PUBLIC        first_counter
   D:000CH         PUBLIC        second_counter_enabled
   B:00D0H.7       PUBLIC        CY
-  C:0965H         PUBLIC        main
+  C:0961H         PUBLIC        main
   D:0089H         PUBLIC        TMOD
-  C:093BH         PUBLIC        start_timer
-  C:08CAH         PUBLIC        secondMachine
+  C:0937H         PUBLIC        start_timer
+  C:08C8H         PUBLIC        secondMachine
   D:000DH         PUBLIC        first_counter_enabled
   B:00A8H.1       PUBLIC        ET0
   B:00A0H.1       PUBLIC        ch
@@ -87,39 +87,39 @@ SYMBOL TABLE OF MODULE:  .\Objects\exp3 (EXP3)
   B:0088H.4       PUBLIC        TR0
   D:000EH         PUBLIC        second_counter
   C:088CH         PUBLIC        firstMachine
-  C:0908H         PUBLIC        timer_interrupt
+  C:0904H         PUBLIC        timer_interrupt
   -------         PROC          MAIN
-  C:0965H         LINE#         21
-  C:0965H         LINE#         22
-  C:0968H         LINE#         23
-  C:096AH         LINE#         24
-  C:096AH         LINE#         25
-  C:096DH         LINE#         26
-  C:0970H         LINE#         27
+  C:0961H         LINE#         21
+  C:0961H         LINE#         22
+  C:0964H         LINE#         23
+  C:0966H         LINE#         24
+  C:0966H         LINE#         25
+  C:0969H         LINE#         26
+  C:096CH         LINE#         27
   -------         ENDPROC       MAIN
   -------         PROC          START_TIMER
-  C:093BH         LINE#         30
-  C:093BH         LINE#         31
-  C:093DH         LINE#         32
-  C:0945H         LINE#         33
-  C:0948H         LINE#         34
-  C:094BH         LINE#         35
-  C:094DH         LINE#         36
-  C:094FH         LINE#         37
+  C:0937H         LINE#         30
+  C:0937H         LINE#         31
+  C:0939H         LINE#         32
+  C:0941H         LINE#         33
+  C:0944H         LINE#         34
+  C:0947H         LINE#         35
+  C:0949H         LINE#         36
+  C:094BH         LINE#         37
   -------         ENDPROC       START_TIMER
   -------         PROC          TIMER_INTERRUPT
-  C:0908H         LINE#         39
-  C:090CH         LINE#         40
-  C:090EH         LINE#         41
-  C:0914H         LINE#         42
-  C:091CH         LINE#         43
-  C:091EH         LINE#         45
-  C:092AH         LINE#         46
-  C:0936H         LINE#         47
+  C:0904H         LINE#         39
+  C:0908H         LINE#         40
+  C:090AH         LINE#         41
+  C:0910H         LINE#         42
+  C:0918H         LINE#         43
+  C:091AH         LINE#         45
+  C:0926H         LINE#         46
+  C:0932H         LINE#         47
   -------         ENDPROC       TIMER_INTERRUPT
   -------         PROC          FIRSTMACHINE
   -------         DO            
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/25/2019  14:26:14  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/25/2019  16:04:40  PAGE 3
 
 
   D:0008H         SYMBOL        state
@@ -141,49 +141,49 @@ SYMBOL TABLE OF MODULE:  .\Objects\exp3 (EXP3)
   C:08B9H         LINE#         64
   C:08BAH         LINE#         65
   C:08BAH         LINE#         66
-  C:08C3H         LINE#         67
-  C:08C6H         LINE#         68
-  C:08C9H         LINE#         69
-  C:08C9H         LINE#         70
-  C:08C9H         LINE#         71
-  C:08C9H         LINE#         72
+  C:08C2H         LINE#         67
+  C:08C5H         LINE#         68
+  C:08C7H         LINE#         69
+  C:08C7H         LINE#         70
+  C:08C7H         LINE#         71
+  C:08C7H         LINE#         72
   -------         ENDPROC       FIRSTMACHINE
   -------         PROC          SECONDMACHINE
   -------         DO            
   D:0009H         SYMBOL        state
   -------         ENDDO         
-  C:08CAH         LINE#         74
-  C:08CAH         LINE#         76
-  C:08D6H         LINE#         77
-  C:08D6H         LINE#         78
-  C:08D9H         LINE#         79
-  C:08DCH         LINE#         80
-  C:08DCH         LINE#         81
-  C:08DDH         LINE#         82
-  C:08DDH         LINE#         83
-  C:08E0H         LINE#         84
-  C:08ECH         LINE#         85
-  C:08F1H         LINE#         86
-  C:08F4H         LINE#         87
-  C:08F7H         LINE#         88
-  C:08F7H         LINE#         89
-  C:08F8H         LINE#         90
-  C:08F8H         LINE#         91
-  C:0901H         LINE#         92
-  C:0904H         LINE#         93
-  C:0907H         LINE#         94
-  C:0907H         LINE#         95
-  C:0907H         LINE#         96
-  C:0907H         LINE#         97
+  C:08C8H         LINE#         74
+  C:08C8H         LINE#         76
+  C:08D4H         LINE#         77
+  C:08D4H         LINE#         78
+  C:08D7H         LINE#         79
+  C:08DAH         LINE#         80
+  C:08DAH         LINE#         81
+  C:08DBH         LINE#         82
+  C:08DBH         LINE#         83
+  C:08DEH         LINE#         84
+  C:08EAH         LINE#         85
+  C:08EFH         LINE#         86
+  C:08F2H         LINE#         87
+  C:08F5H         LINE#         88
+  C:08F5H         LINE#         89
+  C:08F6H         LINE#         90
+  C:08F6H         LINE#         91
+  C:08FEH         LINE#         92
+  C:0901H         LINE#         93
+  C:0903H         LINE#         94
+  C:0903H         LINE#         95
+  C:0903H         LINE#         96
+  C:0903H         LINE#         97
   -------         ENDPROC       SECONDMACHINE
   -------         ENDMOD        EXP3
 
 ******************************************************************************
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/25/2019  14:26:14  PAGE 4
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/25/2019  16:04:40  PAGE 4
 
 
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00E8H BYTE (11%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00E4H BYTE (11%) *
 ******************************************************************************
 
-Program Size: data=17.0 xdata=0 code=376
+Program Size: data=17.0 xdata=0 code=372
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
