@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    03/10/2019  18:03:36  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    03/11/2019  15:40:39  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -11,6 +11,7 @@ MEMORY MODEL: SMALL
 INPUT MODULES INCLUDED:
   .\Objects\exp2.obj (EXP2)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?SLCMP)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
 
 
@@ -22,23 +23,18 @@ LINK MAP OF MODULE:  .\Objects\exp2 (EXP2)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     000CH     UNIT         ?DT?EXP2
-            IDATA   0014H     0001H     UNIT         ?STACK
+            DATA    0008H     0006H     UNIT         ?DT?EXP2
+            IDATA   000EH     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
                     0003H     07FDH                  *** GAP ***
             CODE    0800H     008CH     UNIT         ?C_C51STARTUP
-            CODE    088CH     0051H     UNIT         ?PR?FIRSTMACHINE?EXP2
-            CODE    08DDH     0051H     UNIT         ?PR?SECONDMACHINE?EXP2
-            CODE    092EH     001FH     UNIT         ?PR?FIRSTTIMEOUT?EXP2
-            CODE    094DH     001FH     UNIT         ?PR?SECONDTIMEOUT?EXP2
-            CODE    096CH     001BH     UNIT         ?PR?CHDOWN?EXP2
-            CODE    0987H     001BH     UNIT         ?PR?CLDOWN?EXP2
-            CODE    09A2H     001AH     UNIT         ?PR?MAIN?EXP2
-            CODE    09BCH     001AH     UNIT         ?PR?CHUP?EXP2
-            CODE    09D6H     001AH     UNIT         ?PR?CLUP?EXP2
-            CODE    09F0H     0011H     UNIT         ?C_INITSEG
+            CODE    088CH     004CH     UNIT         ?PR?FIRSTMACHINE?EXP2
+            CODE    08D8H     004CH     UNIT         ?PR?SECONDMACHINE?EXP2
+            CODE    0924H     0016H     UNIT         ?C?LIB_CODE
+            CODE    093AH     0008H     UNIT         ?PR?MAIN?EXP2
+            CODE    0942H     0007H     UNIT         ?C_INITSEG
 
 
 
@@ -56,19 +52,6 @@ SEGMENT
   +--> ?PR?FIRSTMACHINE?EXP2
   +--> ?PR?SECONDMACHINE?EXP2
 
-?PR?FIRSTMACHINE?EXP2
-  +--> ?PR?CHUP?EXP2
-  +--> ?PR?CHDOWN?EXP2
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/10/2019  18:03:36  PAGE 2
-
-
-  +--> ?PR?FIRSTTIMEOUT?EXP2
-
-?PR?SECONDMACHINE?EXP2
-  +--> ?PR?CLUP?EXP2
-  +--> ?PR?CLDOWN?EXP2
-  +--> ?PR?SECONDTIMEOUT?EXP2
-
 
 
 SYMBOL TABLE OF MODULE:  .\Objects\exp2 (EXP2)
@@ -76,152 +59,94 @@ SYMBOL TABLE OF MODULE:  .\Objects\exp2 (EXP2)
   VALUE           TYPE          NAME
   ----------------------------------
 
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/11/2019  15:40:39  PAGE 2
+
+
   -------         MODULE        EXP2
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0080H         PUBLIC        P0
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
-  D:0008H         PUBLIC        second_state
-  D:000AH         PUBLIC        first_counter
-  C:09BCH         PUBLIC        chUp
-  C:09D6H         PUBLIC        clUp
-  C:092EH         PUBLIC        firstTimeout
-  C:09A2H         PUBLIC        main
-  D:000CH         PUBLIC        first_state
-  C:08DDH         PUBLIC        secondMachine
+  C:093AH         PUBLIC        main
+  C:08D8H         PUBLIC        secondMachine
   B:00A0H.1       PUBLIC        ch
   B:00A0H.0       PUBLIC        cl
   C:088CH         PUBLIC        firstMachine
-  D:000EH         PUBLIC        second_counter
-  C:096CH         PUBLIC        chDown
-  C:0987H         PUBLIC        clDown
-  C:094DH         PUBLIC        secondTimeout
-  D:0010H         PUBLIC        old_ch
-  D:0012H         PUBLIC        old_cl
   -------         PROC          MAIN
-  C:09A2H         LINE#         18
-  C:09A2H         LINE#         19
-  C:09ABH         LINE#         20
-  C:09B4H         LINE#         21
-  C:09B4H         LINE#         22
-  C:09B7H         LINE#         23
-  C:09BAH         LINE#         24
+  C:093AH         LINE#         17
+  C:093AH         LINE#         20
+  C:093AH         LINE#         21
+  C:093DH         LINE#         22
+  C:0940H         LINE#         23
   -------         ENDPROC       MAIN
-  -------         PROC          CHDOWN
-  C:096CH         LINE#         27
-  C:096CH         LINE#         28
-  C:0975H         LINE#         29
-  C:097EH         LINE#         30
-  C:0983H         LINE#         31
-  C:0986H         LINE#         32
-  -------         ENDPROC       CHDOWN
-  -------         PROC          CLDOWN
-  C:0987H         LINE#         34
-  C:0987H         LINE#         35
-  C:0990H         LINE#         36
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/10/2019  18:03:36  PAGE 3
-
-
-  C:0999H         LINE#         37
-  C:099EH         LINE#         38
-  C:09A1H         LINE#         39
-  -------         ENDPROC       CLDOWN
-  -------         PROC          CHUP
-  C:09BCH         LINE#         41
-  C:09BCH         LINE#         42
-  C:09C5H         LINE#         43
-  C:09CDH         LINE#         44
-  C:09D2H         LINE#         45
-  C:09D5H         LINE#         46
-  -------         ENDPROC       CHUP
-  -------         PROC          CLUP
-  C:09D6H         LINE#         48
-  C:09D6H         LINE#         49
-  C:09DFH         LINE#         50
-  C:09E7H         LINE#         51
-  C:09ECH         LINE#         52
-  C:09EFH         LINE#         53
-  -------         ENDPROC       CLUP
-  -------         PROC          FIRSTTIMEOUT
-  C:092EH         LINE#         55
-  C:092EH         LINE#         56
-  C:0938H         LINE#         57
-  C:093DH         LINE#         58
-  C:0941H         LINE#         59
-  C:0941H         LINE#         60
-  C:0949H         LINE#         61
-  C:094CH         LINE#         62
-  -------         ENDPROC       FIRSTTIMEOUT
-  -------         PROC          SECONDTIMEOUT
-  C:094DH         LINE#         64
-  C:094DH         LINE#         65
-  C:0957H         LINE#         66
-  C:095CH         LINE#         67
-  C:0960H         LINE#         68
-  C:0960H         LINE#         69
-  C:0968H         LINE#         70
-  C:096BH         LINE#         71
-  -------         ENDPROC       SECONDTIMEOUT
   -------         PROC          FIRSTMACHINE
-  C:088CH         LINE#         73
+  -------         DO            
+  D:0008H         SYMBOL        state
+  D:0009H         SYMBOL        counter
+  -------         ENDDO         
   C:088CH         LINE#         74
-  C:089CH         LINE#         75
-  C:089CH         LINE#         76
-  C:08A3H         LINE#         77
-  C:08A3H         LINE#         78
-  C:08A3H         LINE#         79
-  C:08ACH         LINE#         80
-  C:08B2H         LINE#         81
-  C:08B2H         LINE#         82
-  C:08B3H         LINE#         83
-  C:08B3H         LINE#         84
-  C:08BAH         LINE#         85
-  C:08C6H         LINE#         86
-  C:08CCH         LINE#         87
-  C:08CCH         LINE#         88
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/10/2019  18:03:36  PAGE 4
-
-
-  C:08CDH         LINE#         89
-  C:08CDH         LINE#         90
-  C:08D4H         LINE#         91
-  C:08D7H         LINE#         92
-  C:08DCH         LINE#         93
-  C:08DCH         LINE#         94
-  C:08DCH         LINE#         95
-  C:08DCH         LINE#         96
+  C:088CH         LINE#         77
+  C:0898H         LINE#         78
+  C:0898H         LINE#         79
+  C:089BH         LINE#         80
+  C:089EH         LINE#         81
+  C:089EH         LINE#         82
+  C:089FH         LINE#         83
+  C:089FH         LINE#         84
+  C:08A2H         LINE#         85
+  C:08AEH         LINE#         86
+  C:08B3H         LINE#         87
+  C:08B6H         LINE#         88
+  C:08B6H         LINE#         89
+  C:08B7H         LINE#         90
+  C:08B7H         LINE#         91
+  C:08D2H         LINE#         92
+  C:08D5H         LINE#         93
+  C:08D7H         LINE#         94
+  C:08D7H         LINE#         95
+  C:08D7H         LINE#         96
+  C:08D7H         LINE#         97
   -------         ENDPROC       FIRSTMACHINE
   -------         PROC          SECONDMACHINE
-  C:08DDH         LINE#         98
-  C:08DDH         LINE#         99
-  C:08EDH         LINE#         100
-  C:08EDH         LINE#         101
-  C:08F4H         LINE#         102
-  C:08F4H         LINE#         103
-  C:08F4H         LINE#         104
-  C:08FDH         LINE#         105
-  C:0903H         LINE#         106
-  C:0903H         LINE#         107
-  C:0904H         LINE#         108
-  C:0904H         LINE#         109
-  C:090BH         LINE#         110
-  C:0917H         LINE#         111
-  C:091DH         LINE#         112
-  C:091DH         LINE#         113
-  C:091EH         LINE#         114
-  C:091EH         LINE#         115
-  C:0925H         LINE#         116
-  C:0928H         LINE#         117
-  C:092DH         LINE#         118
-  C:092DH         LINE#         119
-  C:092DH         LINE#         120
-  C:092DH         LINE#         121
+  -------         DO            
+  D:000BH         SYMBOL        state
+  D:000CH         SYMBOL        counter
+  -------         ENDDO         
+  C:08D8H         LINE#         99
+  C:08D8H         LINE#         102
+  C:08E4H         LINE#         103
+  C:08E4H         LINE#         104
+  C:08E7H         LINE#         105
+  C:08EAH         LINE#         106
+  C:08EAH         LINE#         107
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  03/11/2019  15:40:39  PAGE 3
+
+
+  C:08EBH         LINE#         108
+  C:08EBH         LINE#         109
+  C:08EEH         LINE#         110
+  C:08FAH         LINE#         111
+  C:08FFH         LINE#         112
+  C:0902H         LINE#         113
+  C:0902H         LINE#         114
+  C:0903H         LINE#         115
+  C:0903H         LINE#         116
+  C:091EH         LINE#         117
+  C:0921H         LINE#         118
+  C:0923H         LINE#         119
+  C:0923H         LINE#         120
+  C:0923H         LINE#         121
+  C:0923H         LINE#         122
   -------         ENDPROC       SECONDMACHINE
   -------         ENDMOD        EXP2
 
+  -------         MODULE        ?C?SLCMP
+  C:0924H         PUBLIC        ?C?SLCMP
+  -------         ENDMOD        ?C?SLCMP
+
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0174H BYTE (18%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00A6H BYTE ( 8%) *
 ******************************************************************************
 
-Program Size: data=21.0 xdata=0 code=516
+Program Size: data=15.0 xdata=0 code=332
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
