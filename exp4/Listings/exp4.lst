@@ -1,0 +1,66 @@
+C51 COMPILER V9.59.0.0   EXP4                                                              03/25/2019 15:58:27 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE EXP4
+OBJECT MODULE PLACED IN .\Objects\exp4.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE exp4.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\exp4
+                    -.lst) TABS(2) OBJECT(.\Objects\exp4.obj)
+
+line level    source
+
+   1          #include <REG51F.H>
+   2          
+   3          #define BASE 204
+   4          
+   5          void start_timer();
+   6          void start_serial();
+   7          
+   8          unsigned char buffer;
+   9          
+  10          void main() {
+  11   1        start_timer();
+  12   1        start_serial();
+  13   1        EA = 1;
+  14   1        
+  15   1        while(1);
+  16   1      }
+  17          
+  18          void start_timer() {
+  19   1        TR1 = 0;
+  20   1        TMOD = (TMOD & 0xF0) | 0x20;
+  21   1        PCON = (PCON & 0x0F) | 0x80;
+  22   1        TH1 = BASE;
+  23   1        TL1 = BASE;
+  24   1        TR1 = 1;
+  25   1      }
+  26          
+  27          void start_serial() {
+  28   1        ES = 0;
+  29   1        SCON = (SCON & 0x0F) | 0x50;
+  30   1        ES = 1;
+  31   1      }
+  32          
+  33          void serial_interrupt(void) interrupt 4 using 2 {
+  34   1        if (TI == 1)
+  35   1          T1 = 0;
+  36   1        
+  37   1        if (RI == 1) {
+  38   2          RI = 0;
+  39   2          buffer = SBUF;
+  40   2          SBUF = buffer + 1;
+  41   2        }
+  42   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     73    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
