@@ -1,4 +1,4 @@
-#include <REG51F.H>
+#include <REG517A.H>
 
 #define BASE 204  
 #define RING_SIZE 16 // Length of circular buffers
@@ -8,36 +8,29 @@ unsigned char	tx_ring[RING_SIZE]; // Transmission circular buffer
 unsigned char rx_head = 0, rx_tail = 0, tx_head = 0, tx_tail = 0, tx_busy = 0;
 
 void serial_interrupt(void) interrupt 4 using 2 { // Interrupt while there's something to be transmitted or received
-	if (TI == 1) {
-		TI = 0;
+	if (TI0 == 1) {
+		TI0 = 0;
 		if (tx_head != tx_tail) { // Is there something to be transmitted?
-				SBUF = tx_ring[tx_head];
+				S0BUF = tx_ring[tx_head];
 				tx_head = (tx_head + 1) % RING_SIZE;
 		} else tx_busy = 0; // Not busy anymore (transmission done)
 	}
 	
-	if (RI == 1) {
-		RI = 0;
+	if (RI0 == 1) {
+		RI0 = 0;
 		if ((rx_tail + 1) % RING_SIZE != rx_head) { // Is there space in rx_ring to receive a new char?
-			rx_ring[rx_tail] = SBUF;
+			rx_ring[rx_tail] = S0BUF;
 			rx_tail = (rx_tail + 1) % RING_SIZE;
 		}
 	}
 }
 
-void start_timer() { // Set timer 1 to be used in 8-bit autoreload mode as baudrate for the serial interface
-	TR1 = 0; // Stop timer
-	TMOD = (TMOD & 0xF0) | 0x20; // 8-bit autoreload. TLx is automatically reloaded from THx
-	PCON = (PCON & 0x0F) | 0x80; // SMOD = 1
- 	TH1 = BASE; 
-	TL1 = BASE;
-	TR1 = 1; // Continue timer
-}
-
-void start_serial() { // Set serial interface to be used in mode 1
-	ES = 0; // Stop serial interface
-	SCON = (SCON & 0x0F) | 0x50; // Mode 1, Reception enabled
-	ES = 1; // Enable serial interface
+void start_serial() { // Set serial interface 0 to be used in mode 1 and enable baud rate generator (9600 baud)
+	ES0 = 0; // Stop serial interface 0
+	S0CON = (S0CON & 0x0F) | 0x50; // Mode 1, Reception enabled
+	BD = 1; // Baud rate enable (take from a dedicated prescaler)
+	PCON = (PCON | 0x80); //SMOD = 1 (baud rate of serial interface 0 in modes 1, 2, 3 is doubled)
+	ES0 = 1; // Enable serial interface 0
 }
 
 void sendChar(char c) { // Append and/or trigger a transmission of a byte through the circular buffer tx_ring
@@ -48,7 +41,7 @@ void sendChar(char c) { // Append and/or trigger a transmission of a byte throug
 	
 	if (!tx_busy) { // Trigger a transmission if a transmission isn't happening
 		tx_busy = 1;
-		TI = 1;
+		TI0 = 1;
 	}
 }
 
@@ -85,9 +78,8 @@ void receiveString(char *s) { // Receive a string from buffer and copy to s
 }
 
 void main() {
-	start_timer();
 	start_serial();
-	EA = 1; // Enable all interrupt
+	EAL = 1; // Enable all interrupt
 	
 	while(1);
 }

@@ -1,0 +1,69 @@
+C51 COMPILER V9.59.0.0   EXP7                                                              04/22/2019 14:55:12 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE EXP7
+OBJECT MODULE PLACED IN .\Objects\exp7.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE exp7.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\exp7
+                    -.lst) TABS(2) OBJECT(.\Objects\exp7.obj)
+
+line level    source
+
+   1          #include <REG517A.H>
+   2          
+   3          #define CLK 12000000
+   4          #define FREQ_TIMER 100
+   5          #define CORRECTION 6000
+   6          #define INITIAL_TH0 ((65536 - (CLK/(12*FREQ_TIMER)) + CORRECTION) >> 8)
+   7          #define INITIAL_TL0 ((65536 - (CLK/(12*FREQ_TIMER)) + CORRECTION) & 0xFF)
+   8          
+   9          unsigned int counter = 0;
+  10          
+  11          void start_timer() {
+  12   1          TR0 = 0;
+  13   1          TMOD = (TMOD & 0xF0) | 0x01;
+  14   1          TL0 = INITIAL_TL0;
+  15   1          TH0 = INITIAL_TH0;
+  16   1          ET0 = 1;
+  17   1          TR0 = 1;
+  18   1      }
+  19          
+  20          void timer_interrupt(void) interrupt 1 using 2 {
+  21   1        TR0 = 0;
+  22   1        TL0 += INITIAL_TL0;
+  23   1        TH0 += INITIAL_TH0 + (unsigned char) CY;
+  24   1        TR0 = 1;
+  25   1        
+  26   1        counter++;
+  27   1      }
+  28          
+  29          void pinSwitch(){
+  30   1          if (counter == 100) {
+  31   2            counter = 0;
+  32   2            P4 = ~P4;
+  33   2          }
+  34   1      }
+  35          
+  36          void main() {
+  37   1        start_timer();
+  38   1        P4 = 0x00;
+  39   1        EAL = 1;
+  40   1        while(1) {
+  41   2          pinSwitch();
+  42   2        }
+  43   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     85    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILER V9.59.0.0   EXP7                                                              04/22/2019 14:55:12 PAGE 2   
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

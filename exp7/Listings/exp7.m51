@@ -1,0 +1,127 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/22/2019  14:55:12  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\exp7.obj TO .\Objects\exp7 PRINT (.\Listings\exp7.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\exp7.obj (EXP7)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\exp7 (EXP7)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?DT?EXP7
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+                    000EH     07F2H                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     0023H     UNIT         ?PR?TIMER_INTERRUPT?EXP7
+            CODE    08AFH     0015H     UNIT         ?PR?START_TIMER?EXP7
+            CODE    08C4H     0010H     UNIT         ?PR?PINSWITCH?EXP7
+            CODE    08D4H     000DH     UNIT         ?PR?MAIN?EXP7
+            CODE    08E1H     0005H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\exp7 (EXP7)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?EXP7
+  +--> ?C_INITSEG
+
+?PR?MAIN?EXP7
+  +--> ?PR?START_TIMER?EXP7
+  +--> ?PR?PINSWITCH?EXP7
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\exp7 (EXP7)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/22/2019  14:55:12  PAGE 2
+
+
+
+  -------         MODULE        EXP7
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00E8H         PUBLIC        P4
+  D:0008H         PUBLIC        counter
+  B:00D0H.7       PUBLIC        CY
+  C:08D4H         PUBLIC        main
+  D:0089H         PUBLIC        TMOD
+  C:08AFH         PUBLIC        start_timer
+  C:08C4H         PUBLIC        pinSwitch
+  B:00A8H.1       PUBLIC        ET0
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:00A8H.7       PUBLIC        EAL
+  B:0088H.4       PUBLIC        TR0
+  C:088CH         PUBLIC        timer_interrupt
+  -------         PROC          START_TIMER
+  C:08AFH         LINE#         11
+  C:08AFH         LINE#         12
+  C:08B1H         LINE#         13
+  C:08B9H         LINE#         14
+  C:08BCH         LINE#         15
+  C:08BFH         LINE#         16
+  C:08C1H         LINE#         17
+  C:08C3H         LINE#         18
+  -------         ENDPROC       START_TIMER
+  -------         PROC          TIMER_INTERRUPT
+  C:088CH         LINE#         20
+  C:0890H         LINE#         21
+  C:0892H         LINE#         22
+  C:0898H         LINE#         23
+  C:08A0H         LINE#         24
+  C:08A2H         LINE#         26
+  C:08AAH         LINE#         27
+  -------         ENDPROC       TIMER_INTERRUPT
+  -------         PROC          PINSWITCH
+  C:08C4H         LINE#         29
+  C:08C4H         LINE#         30
+  C:08CCH         LINE#         31
+  C:08D0H         LINE#         32
+  C:08D3H         LINE#         33
+  C:08D3H         LINE#         34
+  -------         ENDPROC       PINSWITCH
+  -------         PROC          MAIN
+  C:08D4H         LINE#         36
+  C:08D4H         LINE#         37
+  C:08D7H         LINE#         38
+  C:08DAH         LINE#         39
+  C:08DCH         LINE#         40
+  C:08DCH         LINE#         41
+  C:08DFH         LINE#         42
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        EXP7
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 005CH BYTE ( 4%) *
+******************************************************************************
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/22/2019  14:55:12  PAGE 3
+
+
+
+Program Size: data=11.0 xdata=0 code=236
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
