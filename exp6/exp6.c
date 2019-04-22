@@ -1,11 +1,12 @@
 #include <REG517A.H>
+#include <string.h>
 
 #define BASE 204  
 #define RING_SIZE 16 // Length of circular buffers
 
 unsigned char rx_ring[RING_SIZE]; // Reception circular buffer
 unsigned char	tx_ring[RING_SIZE]; // Transmission circular buffer
-unsigned char rx_head = 0, rx_tail = 0, tx_head = 0, tx_tail = 0, tx_busy = 0;
+unsigned char rx_head = 0, rx_tail = 0, tx_head = 0, tx_tail = 0, tx_busy = 0, tx_ring_data_len = 0;
 
 void serial_interrupt(void) interrupt 4 using 2 { // Interrupt while there's something to be transmitted or received
 	if (TI0 == 1) {
@@ -13,6 +14,7 @@ void serial_interrupt(void) interrupt 4 using 2 { // Interrupt while there's som
 		if (tx_head != tx_tail) { // Is there something to be transmitted?
 				S0BUF = tx_ring[tx_head];
 				tx_head = (tx_head + 1) % RING_SIZE;
+				tx_ring_data_len--;
 		} else tx_busy = 0; // Not busy anymore (transmission done)
 	}
 	
@@ -37,6 +39,7 @@ void sendChar(char c) { // Append and/or trigger a transmission of a byte throug
 	if ((tx_tail + 1) % RING_SIZE != tx_head) { // Is there space in tx_ring to append a char? 
 		tx_ring[tx_tail] = c;
 		tx_tail = (tx_tail + 1) % RING_SIZE;
+		tx_ring_data_len++;
 	}
 	
 	if (!tx_busy) { // Trigger a transmission if a transmission isn't happening
@@ -47,6 +50,8 @@ void sendChar(char c) { // Append and/or trigger a transmission of a byte throug
 
 void sendString(char *s) { // Transmit a string
 	unsigned char i;
+	
+	while (RING_SIZE - tx_ring_data_len < strlen(s)+1);
 	for (i = 0; s[i] != '\0'; i++) sendChar(s[i]);
 }
 
@@ -81,5 +86,7 @@ void main() {
 	start_serial();
 	EAL = 1; // Enable all interrupt
 	
-	while(1);
+	while(1) {
+		sendString("Hello World\n");
+	}
 }
