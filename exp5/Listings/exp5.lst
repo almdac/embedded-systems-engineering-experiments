@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   EXP5                                                              04/22/2019 16:39:54 PAGE 1   
+C51 COMPILER V9.59.0.0   EXP5                                                              04/29/2019 14:19:01 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE EXP5
@@ -16,7 +16,7 @@ line level    source
    6          
    7          unsigned char rx_ring[RING_SIZE]; // Reception circular buffer
    8          unsigned char tx_ring[RING_SIZE]; // Transmission circular buffer
-   9          unsigned char rx_head = 0, rx_tail = 0, tx_head = 0, tx_tail = 0, tx_busy = 0, tx_ring_data_len = 0;
+   9          unsigned char rx_head = 0, rx_tail = 0, tx_head = 0, tx_tail = 0, tx_busy = 0;
   10          
   11          void serial_interrupt(void) interrupt 4 using 2 { // Interrupt while there's something to be transmitted o
              -r received
@@ -25,103 +25,110 @@ line level    source
   14   2          if (tx_head != tx_tail) { // Is there something to be transmitted?
   15   3              SBUF = tx_ring[tx_head];
   16   3              tx_head = (tx_head + 1) % RING_SIZE;
-  17   3              tx_ring_data_len--;
-  18   3          } else tx_busy = 0; // Not busy anymore (transmission done)
-  19   2        }
-  20   1        
-  21   1        if (RI == 1) {
-  22   2          RI = 0;
-  23   2          if ((rx_tail + 1) % RING_SIZE != rx_head) { // Is there space in rx_ring to receive a new char?
-  24   3            rx_ring[rx_tail] = SBUF;
-  25   3            rx_tail = (rx_tail + 1) % RING_SIZE;
-  26   3          }
-  27   2        }
-  28   1      }
-  29          
-  30          void start_timer() { // Set timer 1 to be used in 8-bit autoreload mode as baudrate for the serial interfa
+  17   3          } else tx_busy = 0; // Not busy anymore (transmission done)
+  18   2        }
+  19   1        
+  20   1        if (RI == 1) {
+  21   2          RI = 0;
+  22   2          if ((rx_tail + 1) % RING_SIZE != rx_head) { // Is there space in rx_ring to receive a new char?
+  23   3            rx_ring[rx_tail] = SBUF;
+  24   3            rx_tail = (rx_tail + 1) % RING_SIZE;
+  25   3          }
+  26   2        }
+  27   1      }
+  28          
+  29          void start_timer() { // Set timer 1 to be used in 8-bit autoreload mode as baudrate for the serial interfa
              -ce
-  31   1        TR1 = 0; // Stop timer
-  32   1        TMOD = (TMOD & 0xF0) | 0x20; // 8-bit autoreload. TLx is automatically reloaded from THx
-  33   1        PCON = (PCON & 0x0F) | 0x80; // SMOD = 1
-  34   1        TH1 = BASE; 
-  35   1        TL1 = BASE;
-  36   1        TR1 = 1; // Continue timer
-  37   1      }
-  38          
-  39          void start_serial() { // Set serial interface to be used in mode 1
-  40   1        ES = 0; // Stop serial interface
-  41   1        SCON = (SCON & 0x0F) | 0x50; // Mode 1, Reception enabled
-  42   1        ES = 1; // Enable serial interface
-  43   1      }
-  44          
-  45          void sendChar(char c) { // Append and/or trigger a transmission of a byte through the circular buffer tx_r
-             -ing
-  46   1        if ((tx_tail + 1) % RING_SIZE != tx_head) { // Is there space in tx_ring to append a char? 
-  47   2          tx_ring[tx_tail] = c;
-  48   2          tx_tail = (tx_tail + 1) % RING_SIZE;
-  49   2          tx_ring_data_len++;
-  50   2        }
-  51   1        
-C51 COMPILER V9.59.0.0   EXP5                                                              04/22/2019 16:39:54 PAGE 2   
+  30   1        TR1 = 0; // Stop timer
+  31   1        TMOD = (TMOD & 0xF0) | 0x20; // 8-bit autoreload. TLx is automatically reloaded from THx
+  32   1        PCON = (PCON & 0x0F) | 0x80; // SMOD = 1
+  33   1        TH1 = BASE; 
+  34   1        TL1 = BASE;
+  35   1        TR1 = 1; // Continue timer
+  36   1      }
+  37          
+  38          void start_serial() { // Set serial interface to be used in mode 1
+  39   1        ES = 0; // Stop serial interface
+  40   1        SCON = (SCON & 0x0F) | 0x50; // Mode 1, Reception enabled
+  41   1        ES = 1; // Enable serial interface
+  42   1      }
+  43          
+  44          unsigned char sendChar(char c) { // Append and/or trigger a transmission of a byte through the circular bu
+             -ffer tx_ring
+  45   1        unsigned char status = 0;
+  46   1        
+  47   1        if ((tx_tail + 1) % RING_SIZE != tx_head) { // Is there space in tx_ring to append a char? 
+  48   2          tx_ring[tx_tail] = c;
+  49   2          tx_tail = (tx_tail + 1) % RING_SIZE;
+  50   2          status = 1;
+  51   2        }
+C51 COMPILER V9.59.0.0   EXP5                                                              04/29/2019 14:19:01 PAGE 2   
 
-  52   1        if (!tx_busy) { // Trigger a transmission if a transmission isn't happening
-  53   2          tx_busy = 1;
-  54   2          TI = 1;
-  55   2        }
-  56   1      }
-  57          
-  58          void sendString(char *s) { // Transmit a string
-  59   1        unsigned char i;
-  60   1        
-  61   1        while (RING_SIZE - tx_ring_data_len < strlen(s)+1);
-  62   1        for (i = 0; s[i] != '\0'; i++) sendChar(s[i]);
-  63   1      }
-  64          
-  65          char RxBufferVazio() { // Check whether the circular buffer rx_ring is empty
-  66   1        if (rx_head == rx_tail) return 1;
-  67   1        else return 0;
+  52   1        
+  53   1        if (!tx_busy) { // Trigger a transmission if a transmission isn't happening
+  54   2          tx_busy = 1;
+  55   2          TI = 1;
+  56   2        }
+  57   1        
+  58   1        return status;
+  59   1      }
+  60          
+  61          void sendString(char *s) { // Transmit a string
+  62   1        unsigned char i = 0;
+  63   1        
+  64   1        while (s[i] != '\0') {
+  65   2          if (sendChar(s[i])) 
+  66   2            i++;
+  67   2        }
   68   1      }
   69          
-  70          char receiveChar() { // Return a byte from the circular buffer rx_ring
-  71   1        char c;
-  72   1        
-  73   1        if (!RxBufferVazio()) { // Is there something to be received?
-  74   2          c = rx_ring[rx_head];
-  75   2          rx_head = (rx_head + 1) % RING_SIZE;
-  76   2        } return '\0'; // Else, end of string
+  70          char RxBufferVazio() { // Check whether the circular buffer rx_ring is empty
+  71   1        if (rx_head == rx_tail) return 1;
+  72   1        else return 0;
+  73   1      }
+  74          
+  75          char receiveChar() { // Return a byte from the circular buffer rx_ring
+  76   1        char c;
   77   1        
-  78   1        return c;
-  79   1      }
-  80          
-  81          void receiveString(char *s) { // Receive a string from buffer and copy to s
-  82   1        unsigned char i = 0;
-  83   1        char c;
-  84   1        
-  85   1        do {
-  86   2          c = receiveChar();
-  87   2          s[i] = c;
-  88   2          i++;
-  89   2        } while (c != '\0');
-  90   1      }
-  91          
-  92          void main() {
-  93   1        start_timer();
-  94   1        start_serial();
-  95   1        EA = 1; // Enable all interrupt
-  96   1        
-  97   1        while(1) {
-  98   2          sendString("Hello World\n");
-  99   2        }
- 100   1      }
-*** WARNING C294 IN LINE 78 OF exp5.c: unreachable code
+  78   1        if (!RxBufferVazio()) { // Is there something to be received?
+  79   2          c = rx_ring[rx_head];
+  80   2          rx_head = (rx_head + 1) % RING_SIZE;
+  81   2        } return '\0'; // Else, end of string
+  82   1        
+  83   1        return c;
+  84   1      }
+  85          
+  86          void receiveString(char *s) { // Receive a string from buffer and copy to s
+  87   1        unsigned char i = 0;
+  88   1        char c;
+  89   1        
+  90   1        do {
+  91   2          c = receiveChar();
+  92   2          s[i] = c;
+  93   2          i++;
+  94   2        } while (c != '\0');
+  95   1      }
+  96          
+  97          void main() {
+  98   1        start_timer();
+  99   1        start_serial();
+ 100   1        EA = 1; // Enable all interrupt
+ 101   1        
+ 102   1        while(1) {
+ 103   2          sendString("Hello World\n");
+ 104   2        }
+ 105   1      }
+*** WARNING C294 IN LINE 83 OF exp5.c: unreachable code
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    290    ----
+   CODE SIZE        =    261    ----
    CONSTANT SIZE    =     13    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     38       7
+C51 COMPILER V9.59.0.0   EXP5                                                              04/29/2019 14:19:01 PAGE 3   
+
+   DATA SIZE        =     37       7
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

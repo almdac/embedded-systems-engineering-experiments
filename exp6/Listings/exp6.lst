@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   EXP6                                                              04/22/2019 16:32:10 PAGE 1   
+C51 COMPILER V9.59.0.0   EXP6                                                              04/29/2019 14:23:06 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE EXP6
@@ -16,7 +16,7 @@ line level    source
    6          
    7          unsigned char rx_ring[RING_SIZE]; // Reception circular buffer
    8          unsigned char tx_ring[RING_SIZE]; // Transmission circular buffer
-   9          unsigned char rx_head = 0, rx_tail = 0, tx_head = 0, tx_tail = 0, tx_busy = 0, tx_ring_data_len = 0;
+   9          unsigned char rx_head = 0, rx_tail = 0, tx_head = 0, tx_tail = 0, tx_busy = 0;
   10          
   11          void serial_interrupt(void) interrupt 4 using 2 { // Interrupt while there's something to be transmitted o
              -r received
@@ -25,95 +25,100 @@ line level    source
   14   2          if (tx_head != tx_tail) { // Is there something to be transmitted?
   15   3              S0BUF = tx_ring[tx_head];
   16   3              tx_head = (tx_head + 1) % RING_SIZE;
-  17   3              tx_ring_data_len--;
-  18   3          } else tx_busy = 0; // Not busy anymore (transmission done)
-  19   2        }
-  20   1        
-  21   1        if (RI0 == 1) {
-  22   2          RI0 = 0;
-  23   2          if ((rx_tail + 1) % RING_SIZE != rx_head) { // Is there space in rx_ring to receive a new char?
-  24   3            rx_ring[rx_tail] = S0BUF;
-  25   3            rx_tail = (rx_tail + 1) % RING_SIZE;
-  26   3          }
-  27   2        }
-  28   1      }
-  29          
-  30          void start_serial() { // Set serial interface 0 to be used in mode 1 and enable baud rate generator (9600 
+  17   3          } else tx_busy = 0; // Not busy anymore (transmission done)
+  18   2        }
+  19   1        
+  20   1        if (RI0 == 1) {
+  21   2          RI0 = 0;
+  22   2          if ((rx_tail + 1) % RING_SIZE != rx_head) { // Is there space in rx_ring to receive a new char?
+  23   3            rx_ring[rx_tail] = S0BUF;
+  24   3            rx_tail = (rx_tail + 1) % RING_SIZE;
+  25   3          }
+  26   2        }
+  27   1      }
+  28          
+  29          void start_serial() { // Set serial interface 0 to be used in mode 1 and enable baud rate generator (9600 
              -baud)
-  31   1        ES0 = 0; // Stop serial interface 0
-  32   1        S0CON = (S0CON & 0x0F) | 0x50; // Mode 1, Reception enabled
-  33   1        BD = 1; // Baud rate enable (take from a dedicated prescaler)
-  34   1        PCON = (PCON | 0x80); //SMOD = 1 (baud rate of serial interface 0 in modes 1, 2, 3 is doubled)
-  35   1        ES0 = 1; // Enable serial interface 0
-  36   1      }
-  37          
-  38          void sendChar(char c) { // Append and/or trigger a transmission of a byte through the circular buffer tx_r
-             -ing
-  39   1        if ((tx_tail + 1) % RING_SIZE != tx_head) { // Is there space in tx_ring to append a char? 
-  40   2          tx_ring[tx_tail] = c;
-  41   2          tx_tail = (tx_tail + 1) % RING_SIZE;
-  42   2          tx_ring_data_len++;
-  43   2        }
-  44   1        
-  45   1        if (!tx_busy) { // Trigger a transmission if a transmission isn't happening
-  46   2          tx_busy = 1;
-  47   2          TI0 = 1;
-  48   2        }
-  49   1      }
-  50          
-  51          void sendString(char *s) { // Transmit a string
-C51 COMPILER V9.59.0.0   EXP6                                                              04/22/2019 16:32:10 PAGE 2   
+  30   1        ES0 = 0; // Stop serial interface 0
+  31   1        S0CON = (S0CON & 0x0F) | 0x50; // Mode 1, Reception enabled
+  32   1        BD = 1; // Baud rate enable (take from a dedicated prescaler)
+  33   1        PCON = (PCON | 0x80); //SMOD = 1 (baud rate of serial interface 0 in modes 1, 2, 3 is doubled)
+  34   1        ES0 = 1; // Enable serial interface 0
+  35   1      }
+  36          
+  37          unsigned char sendChar(char c) { // Append and/or trigger a transmission of a byte through the circular bu
+             -ffer tx_ring
+  38   1        unsigned char status = 0;
+  39   1        
+  40   1        if ((tx_tail + 1) % RING_SIZE != tx_head) { // Is there space in tx_ring to append a char? 
+  41   2          tx_ring[tx_tail] = c;
+  42   2          tx_tail = (tx_tail + 1) % RING_SIZE;
+  43   2          status = 1;
+  44   2        }
+  45   1        
+  46   1        if (!tx_busy) { // Trigger a transmission if a transmission isn't happening
+  47   2          tx_busy = 1;
+  48   2          TI0 = 1;
+  49   2        }
+  50   1        
+  51   1        return status;
+C51 COMPILER V9.59.0.0   EXP6                                                              04/29/2019 14:23:06 PAGE 2   
 
-  52   1        unsigned char i;
-  53   1        
-  54   1        while (RING_SIZE - tx_ring_data_len < strlen(s)+1);
-  55   1        for (i = 0; s[i] != '\0'; i++) sendChar(s[i]);
-  56   1      }
-  57          
-  58          char RxBufferVazio() { // Check whether the circular buffer rx_ring is empty
-  59   1        if (rx_head == rx_tail) return 1;
-  60   1        else return 0;
+  52   1      }
+  53          
+  54          void sendString(char *s) { // Transmit a string
+  55   1        unsigned char i = 0;
+  56   1        
+  57   1        while (s[i] != '\0') {
+  58   2          if (sendChar(s[i])) 
+  59   2            i++;
+  60   2        }
   61   1      }
   62          
-  63          char receiveChar() { // Return a byte from the circular buffer rx_ring
-  64   1        char c;
-  65   1        
-  66   1        if (!RxBufferVazio()) { // Is there something to be received?
-  67   2          c = rx_ring[rx_head];
-  68   2          rx_head = (rx_head + 1) % RING_SIZE;
-  69   2        } return '\0'; // Else, end of string
+  63          char RxBufferVazio() { // Check whether the circular buffer rx_ring is empty
+  64   1        if (rx_head == rx_tail) return 1;
+  65   1        else return 0;
+  66   1      }
+  67          
+  68          char receiveChar() { // Return a byte from the circular buffer rx_ring
+  69   1        char c;
   70   1        
-  71   1        return c;
-  72   1      }
-  73          
-  74          void receiveString(char *s) { // Receive a string from buffer and copy to s
-  75   1        unsigned char i = 0;
-  76   1        char c;
-  77   1        
-  78   1        do {
-  79   2          c = receiveChar();
-  80   2          s[i] = c;
-  81   2          i++;
-  82   2        } while (c != '\0');
-  83   1      }
-  84          
-  85          void main() {
-  86   1        start_serial();
-  87   1        EAL = 1; // Enable all interrupt
-  88   1        
-  89   1        while(1) {
-  90   2          sendString("Hello World\n");
-  91   2        }
-  92   1      }
-*** WARNING C294 IN LINE 71 OF exp6.c: unreachable code
+  71   1        if (!RxBufferVazio()) { // Is there something to be received?
+  72   2          c = rx_ring[rx_head];
+  73   2          rx_head = (rx_head + 1) % RING_SIZE;
+  74   2        } return '\0'; // Else, end of string
+  75   1        
+  76   1        return c;
+  77   1      }
+  78          
+  79          void receiveString(char *s) { // Receive a string from buffer and copy to s
+  80   1        unsigned char i = 0;
+  81   1        char c;
+  82   1        
+  83   1        do {
+  84   2          c = receiveChar();
+  85   2          s[i] = c;
+  86   2          i++;
+  87   2        } while (c != '\0');
+  88   1      }
+  89          
+  90          void main() {
+  91   1        start_serial();
+  92   1        EAL = 1; // Enable all interrupt
+  93   1        
+  94   1        while(1) {
+  95   2          sendString("Hello World Hello World\n");
+  96   2        }
+  97   1      }
+*** WARNING C294 IN LINE 76 OF exp6.c: unreachable code
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    265    ----
-   CONSTANT SIZE    =     13    ----
+   CODE SIZE        =    236    ----
+   CONSTANT SIZE    =     25    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     38       7
+   DATA SIZE        =     37       7
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
